@@ -19,9 +19,9 @@ const swaggerOptions = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'JWT Auth API',
+            title: 'User Management & Authentication API',
             version: '1.0.0',
-            description: 'API Documentation for JWT Authentication Project',
+            description: 'A RESTful API service providing secure user registration, authentication, and profile management using JSON Web Tokens (JWT).',
         },
         components: {
             securitySchemes: {
