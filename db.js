@@ -1,27 +1,26 @@
-const sql = require('mssql');
+require('dotenv').config();
+const { Pool } = require('pg');
 
-const config = {
-    user: "sa",
-    password: "admin",
-    server: "Krishna",
-    database: "usersDB",
-    options: {trustServerCertificate: true}
-};
-
-sql.on('error' , err => console.log("SQL Error" , err));
-
-async function connectDB()
-{
-    try
-    {
-        await sql.connect(config);
-        console.log("✅ Connected to MSSQL");
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
     }
-    catch(err)
-    {
-        console.log("❌ DB Connection Error: " , err);
+});
+
+pool.on('error', (err) => {
+    console.error('Unexpected error on idle client', err);
+});
+
+async function connectDB() {
+    try {
+        const client = await pool.connect();
+        console.log("✅ Connected to PostgreSQL");
+        client.release();
+    } catch (err) {
+        console.log("❌ DB Connection Error: ", err);
         throw err;
     }
 }
 
-module.exports = { sql, connectDB };
+module.exports = { pool, connectDB };

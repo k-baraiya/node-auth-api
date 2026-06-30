@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { sql } = require('./db');
+const { pool } = require('./db');
 
 const JWT_SECRET = "my_secret_key";
 
@@ -94,13 +94,13 @@ router.post("/signup" , async (req,res) => {
         }
 
         // Email Existes or not
-        const checkUser = await sql.query `
+        const checkUser = await pool.query(`
                           SELECT * 
-                          FROM userTable 
-                          WHERE email = ${email} 
-                          `;
+                          FROM "userTable" 
+                          WHERE email = $1 
+                          `, [email]);
         
-        if(checkUser.recordset.length)
+        if(checkUser.rows.length)
         {
             return res.status(409).send({ message : "Email already exists" });
         }
@@ -108,11 +108,11 @@ router.post("/signup" , async (req,res) => {
         // Hash password
         const hashedPassword = await bcrypt.hash(password , 10);
 
-        await sql.query
-        `INSERT INTO userTable 
-        (name, age , email , password , location) 
-        VALUES (${name} , ${age} , ${email} , ${hashedPassword} , ${location})
-        `;
+        await pool.query(`
+            INSERT INTO "userTable" 
+            (name, age, email, password, location) 
+            VALUES ($1, $2, $3, $4, $5)
+        `, [name, age, email, hashedPassword, location]);
 
         res.status(201).send({ message: "User Registered Successfully " });
     }
@@ -146,18 +146,18 @@ router.post("/login" , async (req,res) => {
         }
 
         // Find user by email
-        const result = await sql.query`
+        const result = await pool.query(`
                        SELECT * 
-                       FROM userTable 
-                       WHERE email = ${email}
-                       `;
+                       FROM "userTable" 
+                       WHERE email = $1
+                       `, [email]);
 
-        if (!result.recordset.length)
+        if (!result.rows.length)
         {
             return res.status(401).send({ message: "Invalid Email or Password" });
         }
 
-        const user = result.recordset[0];
+        const user = result.rows[0];
 
         // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
@@ -193,18 +193,18 @@ router.get("/user", authenticateToken , async (req,res) => {
     {
         const userId = req.user.id;
 
-        const result = await sql.query`
+        const result = await pool.query(`
                        SELECT id, name, age, email, location 
-                       FROM userTable 
-                       WHERE id = ${userId}
-                       `;
+                       FROM "userTable" 
+                       WHERE id = $1
+                       `, [userId]);
 
-        if(!result.recordset.length)
+        if(!result.rows.length)
         {
             return res.status(404).send({ message: "User not found" });
         }
 
-        res.status(200).send(result.recordset[0]);
+        res.status(200).send(result.rows[0]);
     }
     catch(err)
     {
@@ -238,15 +238,13 @@ router.put("/user" , authenticateToken , async (req,res) => {
             });
         }
 
-        const result = await sql.query` UPDATE userTable
-                                        SET
-                                                name = ${name},
-                                                age = ${age},
-                                                location = ${location}
-                                            WHERE id = ${userId}
-        `;
+        const result = await pool.query(`
+            UPDATE "userTable"
+            SET name = $1, age = $2, location = $3
+            WHERE id = $4
+        `, [name, age, location, userId]);
 
-        if(result.rowsAffected[0] === 0)
+        if(result.rowCount === 0)
         {
             return res.status(404).send({ message: "User not found" });
         }
@@ -267,12 +265,12 @@ router.delete("/user" , authenticateToken , async (req,res) => {
     {
         const userId = req.user.id;
 
-        const result = await sql.query`
-                       DELETE FROM userTable 
-                        WHERE id = ${userId} 
-                       `;
+        const result = await pool.query(`
+                       DELETE FROM "userTable" 
+                       WHERE id = $1 
+                       `, [userId]);
 
-        if (result.rowsAffected[0] === 0)
+        if (result.rowCount === 0)
         {
             return res.status(404).send({ message: "User not found" });
         }
