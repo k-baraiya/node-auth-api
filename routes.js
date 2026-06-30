@@ -56,6 +56,75 @@ async function authenticateToken(req, res, next)
 
 //------------------------- Sign-up ---------------------------------------
 
+/**
+ * @swagger
+ * /signup:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Auth]
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - age
+ *               - email
+ *               - password
+ *               - location
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: John Doe
+ *               age:
+ *                 type: integer
+ *                 example: 25
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: john@example.com
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *                 example: securePassword123
+ *               location:
+ *                 type: string
+ *                 example: New York
+ *     responses:
+ *       201:
+ *         description: User Registered Successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User Registered Successfully 
+ *       400:
+ *         description: Invalid input or missing fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: All fields are required.
+ *       409:
+ *         description: Email already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email already exists
+ */
 router.post("/signup" , async (req,res) => {
 
     try
@@ -126,6 +195,65 @@ router.post("/signup" , async (req,res) => {
 
 //----------------------------------- Login   -------------------------------------
 
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     summary: Login a user
+ *     tags: [Auth]
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: john@example.com
+ *               password:
+ *                 type: string
+ *                 example: securePassword123
+ *     responses:
+ *       200:
+ *         description: Login Successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Login Successful
+ *                 token:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *       400:
+ *         description: Email & Password are required / Invalid email
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email & Password are required...
+ *       401:
+ *         description: Invalid Email or Password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Invalid Email or Password
+ */
 router.post("/login" , async (req,res) => {
 
     try
@@ -188,6 +316,56 @@ router.post("/login" , async (req,res) => {
 
 // ------------------------------------------    Get User    --------------------------------------------------
 
+/**
+ * @swagger
+ * /user:
+ *   get:
+ *     summary: Get user details
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: User details retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   example: John Doe
+ *                 age:
+ *                   type: integer
+ *                   example: 25
+ *                 email:
+ *                   type: string
+ *                   example: john@example.com
+ *                 location:
+ *                   type: string
+ *                   example: New York
+ *       401:
+ *         description: Unauthorized - Token Missing or Invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Token Missing
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User not found
+ */
 router.get("/user", authenticateToken , async (req,res) => {
     try 
     {
@@ -215,6 +393,74 @@ router.get("/user", authenticateToken , async (req,res) => {
 
 // -------------------------------------    Update User ------------------------------------------
 
+/**
+ * @swagger
+ * /user:
+ *   put:
+ *     summary: Update user details
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - age
+ *               - location
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: John Smith
+ *               age:
+ *                 type: integer
+ *                 example: 26
+ *               location:
+ *                 type: string
+ *                 example: San Francisco
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User updated successfully
+ *       400:
+ *         description: Invalid input or missing fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: All fields are required
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Access Denied
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User not found
+ */
 router.put("/user" , authenticateToken , async (req,res) => {
     
     try
@@ -259,6 +505,44 @@ router.put("/user" , authenticateToken , async (req,res) => {
 
 // -------------------------------- Delete User ------------------------------------------
 
+/**
+ * @swagger
+ * /user:
+ *   delete:
+ *     summary: Delete a user
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User deleted successfully
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Access Denied
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User not found
+ */
 router.delete("/user" , authenticateToken , async (req,res) => {
     
     try
