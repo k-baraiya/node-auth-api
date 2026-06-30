@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign-Up Page</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.documentElement.classList.add('light-theme');
+            }
+        })();
+    </script>
+</head>
+<body>
+
+    <!-- Theme Toggle Button -->
+    <button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn" aria-label="Toggle Theme">☀️</button>
+
+    <div class="container">
+        <h1>Join Us</h1>
+        <p class="helper-text" style="margin-top: -12px; margin-bottom: 24px;">Create an account to access the dashboard</p>
+
+        <form onsubmit="signup(event)">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="John Doe" required />
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" placeholder="25" min="1" max="100" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" placeholder="San Francisco, CA" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="john@example.com" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required />
+            </div>
+        
+            <button type="submit" class="btn btn-primary" id="signupBtn">
+                <span>Sign-Up</span>
+            </button>
+        </form>
+
+        <p class="helper-text">
+            Already have an account? <a href="login.html">Log In</a>
+        </p>
+    </div>
+
+    <!-- Toast container for notifications -->
+    <div id="toast-container"></div>
+
+    <script src="app.js"></script>
+    <script>
+        // Set body theme class and sync button icon on load
+        document.body.classList.toggle('light-theme', document.documentElement.classList.contains('light-theme'));
+        initTheme();
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.documentElement.classList.add('light-theme');
+            }
+        })();
+    </script>
+</head>
+<body onload="loadProfile()">
+    
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <div class="sidebar-brand">
+                    <span>AdminPortal</span>
+                </div>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item active">
+                        <a href="#">
+                            <span>Profile Dashboard</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-footer">
+                <!-- Sidebar Theme Toggle Button -->
+                <div class="sidebar-theme-toggle">
+                    <span>Theme Mode</span>
+                    <button id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Theme">☀️</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-panel">
+            <header class="main-header">
+                <div class="main-header-info">
+                    <h2>Dashboard Overview</h2>
+                    <p>Manage credentials, info and profile settings</p>
+                </div>
+                <button onclick="logout()" class="btn btn-secondary logout-btn-header">Logout</button>
+            </header>
+
+            <div class="main-workspace">
+                <!-- Card 1: User Profile Display Details -->
+                <div class="dashboard-card">
+                    <h3>User Credentials</h3>
+                    <div class="profile-card-header">
+                        <div class="profile-avatar" id="avatarIcon">U</div>
+                    </div>
+                    
+                    <div id="profile" class="profile-details">
+                        <!-- User Profile dynamic details will load here -->
+                        <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                            <div class="spinner" style="margin-bottom: 12px;"></div>
+                            <p>Loading profile info...</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-actions-footer">
+                        <button onclick="openDeleteModal()" class="btn btn-danger" style="width: 100%;">Delete Account</button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Update Profile Form Workspace (Always Visible) -->
+                <div class="dashboard-card">
+                    <h3>Update Profile Info</h3>
+                    <form name="updateForm" onsubmit="updateUser(event)">
+                        <fieldset>
+                            <div class="form-group">
+                                <label for="updateName">Name</label>
+                                <input type="text" id="updateName" name="name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="updateAge">Age</label>
+                                <input type="number" id="updateAge" name="age" min="1" max="100" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="updateLocation">Location</label>
+                                <input type="text" id="updateLocation" name="location" required>
+                            </div>
+                        </fieldset>
+                    
+                        <button type="submit" class="btn btn-primary" id="updateBtn">
+                            <span>Save Changes</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Custom Dialog: Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-title">Delete Account?</div>
+            <p class="modal-text">This action is permanent and cannot be undone. All your details will be permanently removed from our databases.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()" style="flex: 1;">Cancel</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDeleteUser()" style="flex: 1;">
+                    <span>Delete</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast container for notifications -->
+    <div id="toast-container"></div>
+
+    <script src="app.js"></script>
+    <script>
+        // Set body theme class and sync button icon on load
+        document.body.classList.toggle('light-theme', document.documentElement.classList.contains('light-theme'));
+        initTheme();
+    </script>
+</body>
+</html>
