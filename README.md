@@ -55,3 +55,9 @@ A lightweight, secure REST API built with Node.js, Express, and Microsoft SQL Se
 - mssql
 - jsonwebtoken
 - bcrypt
+
+## Deployment
+
+Render Platform
+
+https://node-auth-api-q6ml.onrender.com
